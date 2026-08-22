@@ -1,0 +1,14 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /alice_posts/{postId} {
+      allow read, write: if request.time < timestamp.date(2026, 12, 31);
+    }
+    match /emporio_medeiros_posts/{postId} {
+      allow read, write: if request.time < timestamp.date(2026, 12, 31);
+    }
+    match /posts/{postId} {
+      allow read, write: if request.time < timestamp.date(2026, 12, 31);
+    }
+  }
+}
