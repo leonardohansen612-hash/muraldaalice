@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Telão • Mural da Alice</title>
+<title>Telão • Mural da Mari</title>
 <link rel="stylesheet" href="/css/base.css">
 <script src="https://cdn.jsdelivr.net/npm/qrious@4.0.2/dist/qrious.min.js"></script>
 <style>
@@ -75,8 +75,8 @@ linear-gradient(135deg,#300720 0%,#771647 48%,#430d2e 100%)}
   <div class="headLeft">
     <img class="liveLogo" src="/assets/logo-texpub-oficial.png" alt="Tex Pub">
     <div class="titleWrap">
-      <div class="titleLine"><h1>Mural da Alice</h1><span class="live"><span class="liveDot"></span>AO VIVO</span></div>
-      <div class="tagline">Momentos especiais para celebrar a Alice. 💗</div>
+      <div class="titleLine"><h1>Mural da Mari</h1><span class="live"><span class="liveDot"></span>AO VIVO</span></div>
+      <div class="tagline">Momentos especiais para celebrar a Mari. 💗</div>
     </div>
   </div>
   <div class="hash" id="hash"></div>
@@ -84,13 +84,13 @@ linear-gradient(135deg,#300720 0%,#771647 48%,#430d2e 100%)}
 <section class="stage">
   <div class="feedPanel"><div id="feed" class="feed"></div></div>
   <aside class="side">
-    <div class="photoCall"><span class="eyebrow">Alice</span><strong>Nossa pequena <em>grande alegria.</em></strong></div>
-    <div id="mascotBox" class="mascotBox"><div class="flash"></div><img class="mascot" src="/assets/alice.jpg" alt="Alice"></div>
+    <div class="photoCall"><span class="eyebrow">Mari</span><strong>Boas companhias, <em>bons drinks e grandes histórias.</em></strong></div>
+    <div id="mascotBox" class="mascotBox"><div class="flash"></div><img class="mascot" src="/assets/mari-funko.png" alt="Mari"></div>
   </aside>
 </section>
 <footer class="footer">
   <div class="footerCopy"><div class="footerIcon">📱</div><div><b>Quer aparecer no mural?</b><span>Envie sua foto e compartilhe seu momento no telão.</span></div></div>
-  <div class="footerHash">#MURALDAALICE • #ALICE</div>
+  <div class="footerHash">#MURALDAMARI • #MARI</div>
   <div class="qrWrap"><div class="qrCopy"><b>Escaneie e apareça!</b><span>Abra a câmera do celular</span></div><div class="qrMini"><canvas id="qr"></canvas></div></div>
 </footer>
 </main>
@@ -98,7 +98,7 @@ linear-gradient(135deg,#300720 0%,#771647 48%,#430d2e 100%)}
 <script type="module">
 import { MuralStore } from '/js/store.js';
 const feed=document.querySelector('#feed'),box=document.querySelector('#mascotBox'),burst=document.querySelector('#burst'),spotlight=document.querySelector('#spotlight'),spotCard=document.querySelector('#spotCard'),cameraFlash=document.querySelector('#cameraFlash');
-document.querySelector('#hash').textContent=MURAL_CONFIG.HASHTAG||'#MuralDaAlice';
+document.querySelector('#hash').textContent=MURAL_CONFIG.HASHTAG||'#MuralDaMari';
 new QRious({element:document.querySelector('#qr'),value:location.origin+'/post/',size:280,level:'H'});
 let lastIds=[];let initial=true;let spotlightTimer=null;
 let carouselPosts=[];let carouselIndex=0;let carouselTimer=null;let pausedForSpotlight=false;
@@ -108,16 +108,16 @@ function celebrate(){box.classList.remove('celebrate');void box.offsetWidth;box.
 function restartProgress(){const bar=feed.querySelector('.progressBar');if(!bar)return;bar.classList.remove('run');void bar.offsetWidth;bar.style.setProperty('--slide-ms',`${SLIDE_MS}ms`);bar.classList.add('run')}
 function drawCarousel(){
   clearTimeout(carouselTimer);
-  if(!carouselPosts.length){feed.innerHTML='<div class="empty"><div><h2>👋 Compartilhe o primeiro momento!</h2><p>Escaneie o QR Code e mande sua foto para o Mural da Alice.</p></div></div>';return}
+  if(!carouselPosts.length){feed.innerHTML='<div class="empty"><div><h2>👋 Compartilhe o primeiro momento!</h2><p>Escaneie o QR Code e mande sua foto para o Mural da Mari.</p></div></div>';return}
   if(carouselIndex>=carouselPosts.length)carouselIndex=0;
   const p=carouselPosts[carouselIndex];
   const total=carouselPosts.length;
   feed.innerHTML=`<div class="progressRail"><div class="progressBar"></div></div><div class="counter">${carouselIndex+1} / ${total}</div>`+
-    (p.image_url?`<article class="slide active"><div class="slideMedia"><img class="slideBg" src="${esc(p.image_url)}" alt=""><img class="photo" src="${esc(p.image_url)}" alt="Publicação de ${esc(p.name||'Anônimo')}"></div><div class="slideInfo"><div class="slideCopy"><b>${esc(p.name||'Anônimo')}</b>${p.message?`<p>${esc(p.message)}</p>`:''}</div><div class="slideBadge">MURAL DA ALICE</div></div></article>`:`<article class="slide noimg active"><div class="quote">“${esc(p.message||'Um momento especial!')}”<small>${esc(p.name||'Anônimo')}</small></div></article>`);
+    (p.image_url?`<article class="slide active"><div class="slideMedia"><img class="slideBg" src="${esc(p.image_url)}" alt=""><img class="photo" src="${esc(p.image_url)}" alt="Publicação de ${esc(p.name||'Anônimo')}"></div><div class="slideInfo"><div class="slideCopy"><b>${esc(p.name||'Anônimo')}</b>${p.message?`<p>${esc(p.message)}</p>`:''}</div><div class="slideBadge">MURAL DA MARI</div></div></article>`:`<article class="slide noimg active"><div class="quote">“${esc(p.message||'Um momento especial!')}”<small>${esc(p.name||'Anônimo')}</small></div></article>`);
   restartProgress();
   if(total>1&&!pausedForSpotlight)carouselTimer=setTimeout(()=>{carouselIndex=(carouselIndex+1)%carouselPosts.length;drawCarousel()},SLIDE_MS)
 }
-function showSpotlight(p){if(!p)return;pausedForSpotlight=true;clearTimeout(carouselTimer);clearTimeout(spotlightTimer);cameraFlash.classList.remove('go');void cameraFlash.offsetWidth;cameraFlash.classList.add('go');const media=p.image_url?`<div class="spotMedia"><img class="spotBg" src="${esc(p.image_url)}" alt=""><img class="spotPhoto" src="${esc(p.image_url)}" alt="Publicação de ${esc(p.name||'Anônimo')}"></div>`:`<div class="spotMedia"><div class="spotNoimg">“${esc(p.message||'Um momento especial!')}”</div></div>`;spotCard.innerHTML=`${media}<div class="spotInfo"><span class="spotBadge">NOVA PUBLICAÇÃO NO MURAL</span><h2>${esc(p.name||'Anônimo')}</h2>${p.message&&p.image_url?`<p>${esc(p.message)}</p>`:''}<div class="spotBrand"><img src="/assets/logo-texpub-oficial.png" alt="Tex Pub"><span>#MuralDaAlice</span></div></div>`;setTimeout(()=>spotlight.classList.add('show'),90);spotlightTimer=setTimeout(()=>{spotlight.classList.remove('show');pausedForSpotlight=false;const idx=carouselPosts.findIndex(x=>x.id===p.id);carouselIndex=idx>=0?idx:0;setTimeout(drawCarousel,300)},7600)}
+function showSpotlight(p){if(!p)return;pausedForSpotlight=true;clearTimeout(carouselTimer);clearTimeout(spotlightTimer);cameraFlash.classList.remove('go');void cameraFlash.offsetWidth;cameraFlash.classList.add('go');const media=p.image_url?`<div class="spotMedia"><img class="spotBg" src="${esc(p.image_url)}" alt=""><img class="spotPhoto" src="${esc(p.image_url)}" alt="Publicação de ${esc(p.name||'Anônimo')}"></div>`:`<div class="spotMedia"><div class="spotNoimg">“${esc(p.message||'Um momento especial!')}”</div></div>`;spotCard.innerHTML=`${media}<div class="spotInfo"><span class="spotBadge">NOVA PUBLICAÇÃO NO MURAL</span><h2>${esc(p.name||'Anônimo')}</h2>${p.message&&p.image_url?`<p>${esc(p.message)}</p>`:''}<div class="spotBrand"><img src="/assets/logo-texpub-oficial.png" alt="Tex Pub"><span>#MuralDaMari</span></div></div>`;setTimeout(()=>spotlight.classList.add('show'),90);spotlightTimer=setTimeout(()=>{spotlight.classList.remove('show');pausedForSpotlight=false;const idx=carouselPosts.findIndex(x=>x.id===p.id);carouselIndex=idx>=0?idx:0;setTimeout(drawCarousel,300)},7600)}
 spotlight.addEventListener('click',()=>{clearTimeout(spotlightTimer);spotlight.classList.remove('show');pausedForSpotlight=false;setTimeout(drawCarousel,250)});
 async function render(isRealtime=false){try{const posts=await MuralStore.listApproved();const ids=posts.map(p=>p.id);const newIds=ids.filter(id=>!lastIds.includes(id));carouselPosts=posts;if(carouselIndex>=carouselPosts.length)carouselIndex=0;if(isRealtime&&!initial&&newIds.length){celebrate();const newest=posts.find(p=>newIds.includes(p.id));drawCarousel();showSpotlight(newest)}else if(!pausedForSpotlight){drawCarousel()}lastIds=ids;initial=false}catch(err){console.error(err);feed.innerHTML='<div class="empty"><div><h2>Conectando…</h2><p>Confira a conexão com o Firebase.</p></div></div>'}}
 await render(false);MuralStore.subscribe(()=>render(true));
