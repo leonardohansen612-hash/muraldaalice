@@ -9,7 +9,8 @@ if (!cfg.FIREBASE_CONFIG?.projectId) throw new Error('Firebase não configurado 
 
 const app = initializeApp(cfg.FIREBASE_CONFIG);
 const db = getFirestore(app);
-const postsRef = collection(db, 'mari_posts');
+const postsRef = collection(db, 'alice_posts');
+const MURAL_KEY = 'mari';
 
 const mapDoc = snap => ({ id: snap.id, ...snap.data() });
 
@@ -50,11 +51,11 @@ async function compressImage(file) {
 const MuralStore = {
   async listApproved() {
     const q = query(postsRef, where('status', '==', 'approved'), limit(60));
-    return (await getDocs(q)).docs.map(mapDoc).sort((a,b)=>(b.created_at||0)-(a.created_at||0));
+    return (await getDocs(q)).docs.map(mapDoc).filter(p => p.mural === MURAL_KEY).sort((a,b)=>(b.created_at||0)-(a.created_at||0));
   },
   async listAll() {
     const q = query(postsRef, orderBy('created_at', 'desc'), limit(200));
-    return (await getDocs(q)).docs.map(mapDoc);
+    return (await getDocs(q)).docs.map(mapDoc).filter(p => p.mural === MURAL_KEY);
   },
   async create(post) {
     const row = {
@@ -63,16 +64,17 @@ const MuralStore = {
       image_url: post.image_url || '',
       status: 'approved',
       source: 'qr',
-      created_at: Date.now()
+      created_at: Date.now(),
+      mural: MURAL_KEY
     };
     const ref = await addDoc(postsRef, row);
     return { id: ref.id, ...row };
   },
   async setStatus(id, status) {
-    await updateDoc(doc(db, 'mari_posts', id), { status, moderated_at: Date.now() });
+    await updateDoc(doc(db, 'alice_posts', id), { status, moderated_at: Date.now() });
   },
   async remove(id) {
-    await deleteDoc(doc(db, 'mari_posts', id));
+    await deleteDoc(doc(db, 'alice_posts', id));
   },
   async uploadImage(file) {
     return compressImage(file);
