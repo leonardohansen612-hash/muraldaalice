@@ -9,7 +9,7 @@ if (!cfg.FIREBASE_CONFIG?.projectId) throw new Error('Firebase não configurado 
 
 const app = initializeApp(cfg.FIREBASE_CONFIG);
 const db = getFirestore(app);
-const postsRef = collection(db, 'alice_posts');
+const postsRef = collection(db, 'mari_posts');
 
 const mapDoc = snap => ({ id: snap.id, ...snap.data() });
 
@@ -69,10 +69,10 @@ const MuralStore = {
     return { id: ref.id, ...row };
   },
   async setStatus(id, status) {
-    await updateDoc(doc(db, 'alice_posts', id), { status, moderated_at: Date.now() });
+    await updateDoc(doc(db, 'mari_posts', id), { status, moderated_at: Date.now() });
   },
   async remove(id) {
-    await deleteDoc(doc(db, 'alice_posts', id));
+    await deleteDoc(doc(db, 'mari_posts', id));
   },
   async uploadImage(file) {
     return compressImage(file);
