@@ -50,12 +50,12 @@ async function compressImage(file) {
 
 const MuralStore = {
   async listApproved() {
-    const q = query(postsRef, where('status', '==', 'approved'), limit(60));
-    return (await getDocs(q)).docs.map(mapDoc).filter(p => p.mural === MURAL_KEY).sort((a,b)=>(b.created_at||0)-(a.created_at||0));
+    const snap = await getDocs(postsRef);
+    return snap.docs.map(mapDoc).filter(p => p.status === 'approved' && p.mural === MURAL_KEY).sort((a,b)=>(b.created_at||0)-(a.created_at||0)).slice(0,60);
   },
   async listAll() {
-    const q = query(postsRef, orderBy('created_at', 'desc'), limit(200));
-    return (await getDocs(q)).docs.map(mapDoc).filter(p => p.mural === MURAL_KEY);
+    const snap = await getDocs(postsRef);
+    return snap.docs.map(mapDoc).filter(p => p.mural === MURAL_KEY).sort((a,b)=>(b.created_at||0)-(a.created_at||0)).slice(0,200);
   },
   async create(post) {
     const row = {
@@ -80,8 +80,7 @@ const MuralStore = {
     return compressImage(file);
   },
   subscribe(cb) {
-    const q = query(postsRef, orderBy('created_at', 'desc'), limit(200));
-    const unsub = onSnapshot(q, () => cb(), err => console.error('Firestore realtime:', err));
+    const unsub = onSnapshot(postsRef, () => cb(), err => { console.error('Firestore realtime:', err); cb(); });
     return unsub;
   },
   isCloud() { return true; },
