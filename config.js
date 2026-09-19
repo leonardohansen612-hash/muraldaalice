@@ -9,7 +9,7 @@ window.MURAL_CONFIG = {
     measurementId: 'G-MZH3DB5ZF1'
   },
   ADMIN_PIN: '1700',
-  HASHTAG: '#MuralDaAlice',
+  HASHTAG: '#MuralDaMari',
   IMAGE_MAX_DIMENSION: 1280,
   IMAGE_JPEG_QUALITY: 0.78,
   IMAGE_MAX_DATAURL_CHARS: 680000
