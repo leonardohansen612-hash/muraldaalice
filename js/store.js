@@ -1,6 +1,6 @@
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/12.17.1/firebase-app.js';
 import {
-  getFirestore, collection, addDoc, getDocs, query, orderBy, limit,
+  getFirestore, collection, addDoc, getDocs, query, where, orderBy, limit,
   doc, updateDoc, deleteDoc, onSnapshot
 } from 'https://www.gstatic.com/firebasejs/12.17.1/firebase-firestore.js';
 
@@ -9,22 +9,13 @@ if (!cfg.FIREBASE_CONFIG?.projectId) throw new Error('Firebase não configurado 
 
 const app = initializeApp(cfg.FIREBASE_CONFIG);
 const db = getFirestore(app);
-
-// IMPORTANTE: usa exatamente a mesma coleção e o mesmo formato de documento
-// do Mural da Alice. Assim funciona com as permissões Firebase já publicadas.
 const postsRef = collection(db, 'alice_posts');
-const MARI_PREFIX = '__MARI__';
+// Mural da Mari compartilha a coleção já autorizada do Alice, sem adicionar campos.
+// Para separar os murais sem exigir novas regras Firebase, o telão/admin da Mari
+// considera apenas publicações criadas a partir do lançamento deste mural.
+const MARI_START = 1789852800000; // 19/09/2026 18:20 (America/Sao_Paulo), margem segura
 
-function mapDoc(snap) {
-  const data = snap.data();
-  const rawName = String(data.name || 'Anônimo');
-  return {
-    id: snap.id,
-    ...data,
-    name: rawName.startsWith(MARI_PREFIX) ? (rawName.slice(MARI_PREFIX.length) || 'Anônimo') : rawName,
-    _isMari: rawName.startsWith(MARI_PREFIX)
-  };
-}
+const mapDoc = snap => ({ id: snap.id, ...snap.data() });
 
 async function compressImage(file) {
   if (!file) return '';
@@ -62,22 +53,16 @@ async function compressImage(file) {
 
 const MuralStore = {
   async listApproved() {
-    const q = query(postsRef, orderBy('created_at', 'desc'), limit(200));
-    return (await getDocs(q)).docs.map(mapDoc)
-      .filter(p => p._isMari && p.status === 'approved')
-      .slice(0, 60);
+    const q = query(postsRef, where('status', '==', 'approved'), limit(60));
+    return (await getDocs(q)).docs.map(mapDoc).filter(p => Number(p.created_at || 0) >= MARI_START).sort((a,b)=>(b.created_at||0)-(a.created_at||0));
   },
   async listAll() {
     const q = query(postsRef, orderBy('created_at', 'desc'), limit(200));
-    return (await getDocs(q)).docs.map(mapDoc).filter(p => p._isMari);
+    return (await getDocs(q)).docs.map(mapDoc).filter(p => Number(p.created_at || 0) >= MARI_START);
   },
   async create(post) {
-    // Mantém EXATAMENTE os mesmos campos do Alice; o identificador da Mari
-    // fica dentro do campo name para não exigir nenhuma regra nova no Firebase.
-    const visibleName = (post.name || 'Anônimo').trim() || 'Anônimo';
-    const maxVisible = Math.max(1, 40 - MARI_PREFIX.length);
     const row = {
-      name: MARI_PREFIX + visibleName.slice(0, maxVisible),
+      name: (post.name || 'Anônimo').slice(0, 40),
       message: (post.message || '').slice(0, 180),
       image_url: post.image_url || '',
       status: 'approved',
@@ -85,7 +70,7 @@ const MuralStore = {
       created_at: Date.now()
     };
     const ref = await addDoc(postsRef, row);
-    return { id: ref.id, ...row, name: visibleName, _isMari: true };
+    return { id: ref.id, ...row };
   },
   async setStatus(id, status) {
     await updateDoc(doc(db, 'alice_posts', id), { status, moderated_at: Date.now() });
@@ -93,10 +78,13 @@ const MuralStore = {
   async remove(id) {
     await deleteDoc(doc(db, 'alice_posts', id));
   },
-  async uploadImage(file) { return compressImage(file); },
+  async uploadImage(file) {
+    return compressImage(file);
+  },
   subscribe(cb) {
     const q = query(postsRef, orderBy('created_at', 'desc'), limit(200));
-    return onSnapshot(q, () => cb(), err => console.error('Firestore realtime:', err));
+    const unsub = onSnapshot(q, () => cb(), err => console.error('Firestore realtime:', err));
+    return unsub;
   },
   isCloud() { return true; },
   cloudName() { return 'Firebase'; }
