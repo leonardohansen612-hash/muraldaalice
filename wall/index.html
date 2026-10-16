@@ -70,10 +70,11 @@ linear-gradient(135deg,#300720 0%,#771647 48%,#430d2e 100%)}
 .side:after{content:"♡";font-size:62px;opacity:.65;color:#ff83bb;right:22px;top:16px}
 .photoCall{width:90%;left:5%;top:14px;text-align:center;padding:10px;border-radius:15px;background:rgba(37,4,28,.75);backdrop-filter:blur(8px)}
 .photoCall strong{font-size:17px!important;line-height:1.2}
-.mascot{top:23%;bottom:auto;height:71%;max-height:71%;box-shadow:0 18px 45px rgba(0,0,0,.48)}
+.mascot{top:27%;bottom:auto;height:69%;max-height:69%;object-fit:contain;object-position:center center;box-shadow:0 18px 45px rgba(0,0,0,.48)}
 .head h1{font-family:Georgia,serif;text-shadow:0 0 24px rgba(255,79,154,.25)}
 .footerIcon{background:linear-gradient(135deg,#ff4f9a,#8b184e)}
-@media(max-width:900px){.stage{grid-template-columns:minmax(0,1fr) 220px;gap:10px}.wall{padding:12px;gap:10px}.mascot{top:29%;height:62%;max-height:62%}.photoCall strong{font-size:13px!important}.head h1{font-size:30px}.footer{min-height:100px}}
+@media(max-width:900px){.stage{grid-template-columns:minmax(0,1fr) 220px;gap:10px}.wall{padding:12px;gap:10px}.mascot{top:30%;height:66%;max-height:66%;object-fit:contain;object-position:center center}.photoCall strong{font-size:13px!important}.head h1{font-size:30px}.footer{min-height:100px}}
+.side .mascot{left:3%;right:3%;width:94%;object-fit:contain;object-position:center center}
 </style>
 </head>
 <body>
@@ -94,12 +95,12 @@ linear-gradient(135deg,#300720 0%,#771647 48%,#430d2e 100%)}
   <div class="feedPanel"><div id="feed" class="feed"></div></div>
   <aside class="side">
     <div class="photoCall"><span class="eyebrow">THE BRIDE ✦</span><strong>Uma noite de <em>brindes, fotos e histórias inesquecíveis.</em></strong></div>
-    <div id="mascotBox" class="mascotBox"><div class="flash"></div><img class="mascot" src="/assets/the-bride.jpg?v=bride20261016" alt="Mari"></div>
+    <div id="mascotBox" class="mascotBox"><div class="flash"></div><img class="mascot" src="/assets/the-bride.jpg?v=bride20261016" alt="Jennifer"></div>
   </aside>
 </section>
 <footer class="footer">
   <div class="footerCopy"><div class="footerIcon">📱</div><div><b>Quer aparecer no mural?</b><span>Envie sua foto e compartilhe seu momento no telão.</span></div></div>
-  <div class="footerHash">#MURALDANOIVA • #MARI</div>
+  <div class="footerHash">#MURALDANOIVA • #JENNIFER</div>
   <div class="qrWrap"><div class="qrCopy"><b>Escaneie e apareça!</b><span>Abra a câmera do celular</span></div><div class="qrMini"><canvas id="qr"></canvas></div></div>
 </footer>
 </main>
@@ -128,7 +129,7 @@ function drawCarousel(){
 }
 function showSpotlight(p){if(!p)return;pausedForSpotlight=true;clearTimeout(carouselTimer);clearTimeout(spotlightTimer);cameraFlash.classList.remove('go');void cameraFlash.offsetWidth;cameraFlash.classList.add('go');const media=p.image_url?`<div class="spotMedia"><img class="spotBg" src="${esc(p.image_url)}" alt=""><img class="spotPhoto" src="${esc(p.image_url)}" alt="Publicação de ${esc(p.name||'Anônimo')}"></div>`:`<div class="spotMedia"><div class="spotNoimg">“${esc(p.message||'Um momento especial!')}”</div></div>`;spotCard.innerHTML=`${media}<div class="spotInfo"><span class="spotBadge">NOVA PUBLICAÇÃO NO MURAL</span><h2>${esc(p.name||'Anônimo')}</h2>${p.message&&p.image_url?`<p>${esc(p.message)}</p>`:''}<div class="spotBrand"><img src="/assets/logo-texpub-oficial.png" alt="Tex Pub"><span>#MuralDaNoiva</span></div></div>`;setTimeout(()=>spotlight.classList.add('show'),90);spotlightTimer=setTimeout(()=>{spotlight.classList.remove('show');pausedForSpotlight=false;const idx=carouselPosts.findIndex(x=>x.id===p.id);carouselIndex=idx>=0?idx:0;setTimeout(drawCarousel,300)},7600)}
 spotlight.addEventListener('click',()=>{clearTimeout(spotlightTimer);spotlight.classList.remove('show');pausedForSpotlight=false;setTimeout(drawCarousel,250)});
-async function render(isRealtime=false){try{const posts=await MuralStore.listApproved();const ids=posts.map(p=>p.id);const newIds=ids.filter(id=>!lastIds.includes(id));carouselPosts=posts;if(carouselIndex>=carouselPosts.length)carouselIndex=0;if(isRealtime&&!initial&&newIds.length){celebrate();const newest=posts.find(p=>newIds.includes(p.id));drawCarousel();showSpotlight(newest)}else if(!pausedForSpotlight){drawCarousel()}lastIds=ids;initial=false}catch(err){console.error(err);feed.innerHTML='<div class="empty"><div><h2>Sem publicações ainda</h2><p>Escaneie o QR Code e mande a primeira foto para a Mari.</p></div></div>'}}
+async function render(isRealtime=false){try{const posts=await MuralStore.listApproved();const ids=posts.map(p=>p.id);const newIds=ids.filter(id=>!lastIds.includes(id));carouselPosts=posts;if(carouselIndex>=carouselPosts.length)carouselIndex=0;if(isRealtime&&!initial&&newIds.length){celebrate();const newest=posts.find(p=>newIds.includes(p.id));drawCarousel();showSpotlight(newest)}else if(!pausedForSpotlight){drawCarousel()}lastIds=ids;initial=false}catch(err){console.error(err);feed.innerHTML='<div class="empty"><div><h2>Sem publicações ainda</h2><p>Escaneie o QR Code e mande a primeira foto para a Jennifer.</p></div></div>'}}
 await render(false);MuralStore.subscribe(()=>render(true));
 </script>
 </body>
